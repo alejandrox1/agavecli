@@ -1,17 +1,16 @@
 # AGAVECLI
 
 `agavecli` is a command line interface, writen in python, for the Agave platform.
-This is arewriting of [TACC-Cloud/agave-cli](https://github.com/TACC-Cloud/agave-cli).
+This is a rewriting of [TACC-Cloud/agave-cli](https://github.com/TACC-Cloud/agave-cli).
 
-This repo is still under development. New commands will be added along with
-patches unles a change is require of the interface.
+This repo is still under development. New commands are being added, along with
+patches trying to reach the state desired for an official release.
 
-Working towards a complete test coverage and full documentation of `agavecli`,
-the (Agave API](https://agaveapi.co/), along with developer documentation. So
-there is plenty more to come!
+In case you want to contribute, you should read our 
+[contributing guidelines](CONTRIBUTING.md) and we have a contributor's guide
+that explains [setting up a development environment and the contribution process](docs/contributing/).
 
-
-## Taking `AGAVECLI` out for a Test Drive
+## Installing `agavecli`
 Right now the package can only be installed from source so...
 ```shell
 git clone https://github.com/alejandrox1/agavecli && \
@@ -24,6 +23,7 @@ Test it out:
 # List all commands
 agavecli -h
 ```
+
 
 ### Agavecli Container
 You know what's even better than installing from source? Installing nothing at
@@ -38,15 +38,15 @@ and run:
 ./run-agavecli.sh tenant ls
 ```
 
-## Agave Credentials
+## Taking `AGAVECLI` out for a Test Drive
+### Agave Credentials
 User credentials and tenant information will be stored by default on the user's
 home directory in a file named agave.json.
 
 To switch between tenants simply use the command `tenant init <tenant>`.
 
 
-
-## Working with Agave Tenants
+### Working with Agave Tenants
 ```shell
 # See all commands available to manage agave tenants
 agavecli tenant -h
@@ -56,7 +56,7 @@ agavecli tenant ls
 agavecli tenant init <tenant name>
 ```
 
-## Managing Oauth Clients
+### Managing Oauth Clients
 ```shell
 # See all commands available to manage clients
 agavecli client -h
@@ -66,13 +66,13 @@ agavecli client ls
 agavecli client create -n agavecli_client -d "testing agavecli"
 ```
 
-## Obtain an Access Token
+### Obtain an Access Token
 ```shell
 # Create an access token
 agavecli auth create
 ```
 
-## Working with Execution and Storage Systems
+### Working with Execution and Storage Systems
 ```shell
 # List all execution systems
 agavecli system ls -x
@@ -81,7 +81,7 @@ agavecli system ls -x
 agavecli system ls -s
 ```
 
-## Operations on Storage Systems
+### Operations on Storage Systems
 ```shell
 # See all commands to work with files
 agavecli fs -h

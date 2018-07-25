@@ -1,5 +1,7 @@
 # Contribute to Agavecli
 
+Want to contribute? Awesome! We have a contributor's guide that explains
+[setting up a development environment and the contribution process](docs/contributing/). 
 
 This page contains information about reporting issues as well as some tips and
 guidelines useful to experienced open source contributors.
