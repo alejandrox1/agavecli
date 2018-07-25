@@ -19,8 +19,12 @@ Bugs fixes should include a unit test case which exercises the bug.
 
 ## Running tests
 
-To run the unit test suite:
-
+To run the unit test suite run the development container:
 ```
-make test
+$ make shell
+```
+
+Inside the container run:
+```
+$ make tests
 ```
