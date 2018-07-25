@@ -1,1 +1,1 @@
-from .__main__ import main_parser
+from .__main__ import main, main_parser

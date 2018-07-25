@@ -267,8 +267,9 @@ fs_cp_parser.add_argument(
 
 
 
-def main():
-    args = main_parser.parse_args()
+def main(args):
+    """ Agave CLI entrypoint
+    """
 
     if len(sys.argv) == 1:
         main_parser.print_help()
@@ -341,4 +342,5 @@ def main():
             files.files_copy(agavedb, token_endpoint, endpoint, origin, destination)
 
 if __name__ == "__main__":
-    main()
+    args = main_parser.parse_args()
+    main(args)

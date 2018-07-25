@@ -75,7 +75,7 @@ class TestMockServer:
             json.dump(sample_agavedb, f, sort_keys=True, indent=4)
 
         args = agavecli.main_parser.parse_args(["auth", "create", "-A", path])
-        args.func(args)
+        agavecli.main(args)
         out, err = capfd.readouterr()
 
         with open(path + "/agave.json", "r") as f:
@@ -103,9 +103,9 @@ class TestMockServer:
             json.dump(sample_agavedb, f, sort_keys=True, indent=4)
 
         args = agavecli.main_parser.parse_args(["auth", "create", "-A", path])
-        args.func(args)
+        agavecli.main(args)
         args = agavecli.main_parser.parse_args(["auth", "refresh", "-A", path])
-        args.func(args)
+        agavecli.main(args)
         out, err = capfd.readouterr()
 
         with open(path + "/agave.json", "r") as f:

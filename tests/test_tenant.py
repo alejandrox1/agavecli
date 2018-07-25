@@ -52,7 +52,7 @@ sample_agavedb = {
 
 def test_tenant_ls(capfd):
     args = agavecli.main_parser.parse_args(["tenant", "ls"])
-    args.func(args)
+    agavecli.main(args)
     out, err = capfd.readouterr()
     assert "CODE                 NAME                                     URL" in out
     assert err == ""
@@ -61,7 +61,7 @@ def test_tenant_ls(capfd):
 def test_tenant_ls_Herr(capfd):
     with pytest.raises(SystemExit) as e:
         args = agavecli.main_parser.parse_args(["tenant", "ls", "-H", "http"])
-        args.func(args)
+        agavecli.main(args)
         out, err = capfd.readouterr()
         assert out == ""
         assert err == "Invalid URL 'http': No schema supplied. Perhaps you meant http://http?\n"
@@ -73,13 +73,13 @@ def test_tenant_init():
     path = tempfile.mkdtemp()
     args = agavecli.main_parser.parse_args(
         ["tenant", "init", "sd2e", "-A", path])
-    args.func(args)
+    agavecli.main(args)
     args = agavecli.main_parser.parse_args(
         ["tenant", "init", "irec", "-A", path])
-    args.func(args)
+    agavecli.main(args)
     args = agavecli.main_parser.parse_args(
         ["tenant", "init", "sd2e", "-A", path])
-    args.func(args)
+    agavecli.main(args)
     with open(path + "/agave.json", "r") as f:
         agavedb = json.load(f)
         shutil.rmtree(path)
