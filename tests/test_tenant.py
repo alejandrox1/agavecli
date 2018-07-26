@@ -1,3 +1,12 @@
+"""
+    test_tenant.py
+
+    Test "agavecli tenant" actions.
+Tenant actions manage communication between the user and the Agave API by
+means of a local database. The local database can be located in ~/agave.json 
+by default but other paths can be specify, make sure to keep track of this. 
+See "agavecli tenant -h" for more information.
+"""
 import pytest
 import json
 import requests
@@ -5,6 +14,9 @@ import shutil
 import tempfile
 import agavecli
 
+
+# This is what the local agave database should look like after initiating two
+# agave tenants (irec and sd2e) and using the sd2e tenant for work.
 sample_agavedb = {
     "current": {
         "access_token": "",
@@ -51,6 +63,11 @@ sample_agavedb = {
 
 
 def test_tenant_ls(capfd):
+    """ Test "agavecli tenant ls" command
+
+    This command is suppose to return a list of agave tenants.
+    """
+    # cmd: agavecli tenant ls
     args = agavecli.main_parser.parse_args(["tenant", "ls"])
     agavecli.main(args)
     out, err = capfd.readouterr()
@@ -59,7 +76,12 @@ def test_tenant_ls(capfd):
 
 
 def test_tenant_ls_Herr(capfd):
+    """ Failure test "agavecli tenant ls
+
+    Test the cli fails gracefully when provided with a bad agave endpoint.
+    """
     with pytest.raises(SystemExit) as e:
+        # cmd: agavecli tenant ls -H http
         args = agavecli.main_parser.parse_args(["tenant", "ls", "-H", "http"])
         agavecli.main(args)
         out, err = capfd.readouterr()
@@ -70,6 +92,13 @@ def test_tenant_ls_Herr(capfd):
 
 
 def test_tenant_init():
+    """ Test "agavecli tenant init <tenant>
+
+    Test initialization of local agave database. The command "tenant init" 
+    should switch the current tenant in use to whatever tenant is specified. 
+    If a tenant other than the current is specified, the current context will
+    be stored in the database.
+    """
     path = tempfile.mkdtemp()
     args = agavecli.main_parser.parse_args(
         ["tenant", "init", "sd2e", "-A", path])
