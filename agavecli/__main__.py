@@ -267,9 +267,11 @@ fs_cp_parser.add_argument(
 
 
 
-def main(args):
+def main(args=None):
     """ Agave CLI entrypoint
     """
+    if args is None:
+        args = main_parser.parse_args()
 
     if len(sys.argv) == 1:
         main_parser.print_help()
