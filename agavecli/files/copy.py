@@ -14,6 +14,10 @@ from ..utils import get_access_token, get_agave_context, handle_bad_response_sta
 
 def cp_local_to_remote(origin, destination, tenant_url, headers, params):
     """ Copy a file from local filesystem to remote Agave system
+
+    curl -# -k -H "Authorization: Bearer <access token>" -X POST \
+            -F "fileToUpload=@file.ext" \
+            'https://tenant.org/files/v2/media/system/tacc-globalfs-user/dir/?pretty=true'
     """
     # Make sure the format for "origin" and "destination" is correct.
     if "agave://" not in origin[:8] and "agave://" in destination[:8]:
@@ -35,12 +39,19 @@ def cp_local_to_remote(origin, destination, tenant_url, headers, params):
         print(err, file=sys.stderr)
         sys.exit(1)
 
+    # Handle bad status code.                                               
+    handle_bad_response_status_code(resp)
+
     return resp
 
 
 
 def cp_remote_to_local(origin, destination, tenant_url, headers, params):
     """ Copy a file from remote Agave system to local filesystem
+
+
+    curl -k -H "Authorization: Bearer <access token>" \
+            -O 'https://tenant/files/v2/media/system/tacc-globalfs-user/dir/file.ext'
     """
     if "agave://" in origin[:8] and "agave://" not in destination[:8]:
         pass
@@ -52,7 +63,7 @@ def cp_remote_to_local(origin, destination, tenant_url, headers, params):
     # Make request.
     try:
         agave_system   = origin[8:] # Remove "agave://"
-        local_filename = destination.split('/')[-1]
+        local_filename = destination
         
         endpoint = "{0}/{1}".format(tenant_url, agave_system)
         resp = requests.get(endpoint, headers=headers, params=params, stream=True)
@@ -63,6 +74,9 @@ def cp_remote_to_local(origin, destination, tenant_url, headers, params):
     except requests.exceptions.MissingSchema as err:
         print(err, file=sys.stderr)
         sys.exit(1)
+
+    # Handle bad status code.                                               
+    handle_bad_response_status_code(resp)
 
     return resp
 
@@ -132,54 +146,12 @@ def files_copy(agavedb, token_endpoint, endpoint, origin, destination):
         # Copy file from local system to remote Agave system.
         resp = cp_local_to_remote(origin, destination, tenant_url, headers, params)
         
-        # Handle bad status code.
-        handle_bad_response_status_code(resp)
-
     # cp remote -> local.
     elif "agave://" in origin[:8] and "agave://" not in destination[:8]:
         # Copy file from remote Agave system to local file system.
         resp = cp_remote_to_local(origin, destination, tenant_url, headers, params)
     
-        # Handle bad status code.
-        handle_bad_response_status_code(resp)
-
     # cp remote -> remote
     elif "agave://" in origin[:8] and "agave://" in destination[:8]:
-        try:
-            # Download file (stream it).
-            origin_system      = origin[8:]      # Remove "agave://"
-            destination_system = destination[8:] # Remove "agave://"
-
-            origin_endpoint = "{0}{1}/{2}".format(agave_context["current"]["baseurl"], endpoint, origin_system)
-            resp = requests.get(origin_endpoint, headers=headers, params=params, stream=True)
-        
-            # Handle bad status code.                                               
-            handle_bad_response_status_code(resp)
-
-            try:
-                # Write downloaded file to /tmp/?
-                tmpdir = tempfile.mkdtemp()
-                filename = destination.split("/")[-1]
-                if filename == "": filename = origin.split("/")[-1]
-                filepath = path.join(tmpdir, filename)
-                with open(filepath, "wb") as tmp:
-                    for chunk in resp.iter_content(chunk_size=1024):
-                        if chunk:
-                            tmp.write(chunk)
-                
-                # Upload file from /tmp/? to remote system.
-                destination_endpoint = "{0}{1}/{2}".format(agave_context["current"]["baseurl"], endpoint, destination_system)
-                files                = {"fileToUpload": open(filepath, "rb")}
-                resp = requests.post(destination_endpoint, files=files, headers=headers, params=params)
-            finally:
-                shutil.rmtree(tmpdir)
-
-            # Handle bad status code.
-            handle_bad_response_status_code(resp)
-        except requests.exceptions.MissingSchema as err:
-            print(err, file=sys.stderr)
-            sys.exit(1)
-    else:
-        print("Make sure you used valid a valid \"origin\" and \"destination\". For Agave systems prepend the path with \"agave://\"", 
-                file=sys.stderr)
-        sys.exit(1)
+        # Copy file from a remote agave system to another.
+        cp_remote_to_remote(origin, destination, tenant_url, headers, params)

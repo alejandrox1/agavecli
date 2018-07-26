@@ -4,9 +4,11 @@
 Methods used throughout the test suite for testing agavecli.
 """
 import socket
-from http.server import HTTPServer
 from threading import Thread
-
+try: # python 2
+    from BaseHTTPServer import HTTPServer
+except ModuleNotFoundError: # python 3
+    from http.server import HTTPServer
 
 def get_free_port():
     """ Find a free port
