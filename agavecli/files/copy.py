@@ -14,6 +14,10 @@ from ..utils import get_access_token, get_agave_context, handle_bad_response_sta
 
 def cp_local_to_remote(origin, destination, tenant_url, headers, params):
     """ Copy a file from local filesystem to remote Agave system
+
+    curl -# -k -H "Authorization: Bearer <access token>" -X POST \
+            -F "fileToUpload=@file.ext" \
+            'https://tenant.org/files/v2/media/system/tacc-globalfs-user/dir/?pretty=true'
     """
     # Make sure the format for "origin" and "destination" is correct.
     if "agave://" not in origin[:8] and "agave://" in destination[:8]:
@@ -44,6 +48,10 @@ def cp_local_to_remote(origin, destination, tenant_url, headers, params):
 
 def cp_remote_to_local(origin, destination, tenant_url, headers, params):
     """ Copy a file from remote Agave system to local filesystem
+
+
+    curl -k -H "Authorization: Bearer <access token>" \
+            -O 'https://tenant/files/v2/media/system/tacc-globalfs-user/dir/file.ext'
     """
     if "agave://" in origin[:8] and "agave://" not in destination[:8]:
         pass
@@ -55,7 +63,7 @@ def cp_remote_to_local(origin, destination, tenant_url, headers, params):
     # Make request.
     try:
         agave_system   = origin[8:] # Remove "agave://"
-        local_filename = destination.split('/')[-1]
+        local_filename = destination
         
         endpoint = "{0}/{1}".format(tenant_url, agave_system)
         resp = requests.get(endpoint, headers=headers, params=params, stream=True)
